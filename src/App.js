@@ -1,23 +1,18 @@
-import logo from './logo.svg';
 import './App.css';
 
+// 现在迷点 不知道怎怎么设置scoped
+
 function App() {
+  const number = [null, NaN, 0, "", undefined];
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {number.map((v, index) => {
+        return (
+          <div key={index}>
+            {index}: {v && ""}
+          </div>
+        );
+      })}
     </div>
   );
 }
