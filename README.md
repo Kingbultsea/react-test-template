@@ -206,3 +206,32 @@ https://www.babeljs.cn/
 https://juejin.cn/post/6850418111599165448
 
 被打包的文件会被分开。
+
+命名导出：
+https://react.docschina.org/docs/code-splitting.html#named-exports
+
+## context
+Context的主要使用场景在于很多不同层级的组件需要访问同样一些的数据。谨慎使用，复用组件十分烂，强绑定的传递，而且需要使用class（hooks牛逼？？）。
+
+> Context 主要应用场景在于很多不同层级的组件需要访问同样一些的数据。
+> Context 主要应用场景在于很多不同层级的组件需要访问同样一些的数据。
+> Context 主要应用场景在于很多不同层级的组件需要访问同样一些的数据。
+> Context 主要应用场景在于很多不同层级的组件需要访问同样一些的数据。
+> Context 主要应用场景在于很多不同层级的组件需要访问同样一些的数据。
+
+比vue的```provide```、```inject```还难用（Provide需要传递，双方都应用到）。
+
+当 Provider 的 value 值发生变化时，它内部的所有消费组件都会重新渲染。Provider 及其内部 consumer 组件都不受制于 shouldComponentUpdate 函数，因此当 consumer 组件在其祖先组件退出更新的情况下也能更新。
+
+这句话不太了解，shouldComponentUpdate不知道是什么，大体推测就是，value的改变强行更新consumer组件。
+
+可以在任何生命周期中访问到他
+
+![](./readmeAssets/context.png)
+
+学习到consumer 与 provider 的配合，其实也就和provide / inject一模一样了
+
+## 高阶组件
+组件是将props转换为UI，而高阶组件是将组件转换为另一个组件。
+
+HOC其实就是把组件重复的东西收集起来，是一个概念（需要多花时间熟悉了），没有副作用
