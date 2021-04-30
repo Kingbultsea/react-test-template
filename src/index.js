@@ -4,15 +4,10 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-// classComponent
-import TestClassComponent from './classComponent.js'
-
-console.log('barsdas2222 23 2233  22123')
-
 // 渲染到 指定element
 ReactDOM.render(
   <div>
-    <TestClassComponent date="123" dom-props="123" dom-int={123} />
+    {/* <TestClassComponent date="123" dom-props="123" dom-int={123} /> */}
     <App/>
   </div>,
   document.getElementById('root')

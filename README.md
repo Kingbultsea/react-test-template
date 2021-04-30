@@ -1,22 +1,38 @@
 # 疑问
-如何设置scoped css
+#### 1.如何设置scoped css
 
-重复render，会达到替换的效果，是根据哪些id，还是只是重新渲染一整颗树。
-> 查看浏览器没有改动的dom，并没有重新替换，而是复用，可能是vnode树，
-> 两颗整树对比，进行diff。
-> state的概念出来了
+#### 2.重复render，会达到替换的效果，是根据哪些id，还是只是重新渲染一整颗树。
+查看浏览器没有改动的dom，并没有重新替换，而是复用，可能是实例vnode树（自增id），
 
-非要class组件才能使用state？（猜是hooks可以改变）
+两颗整树对比，进行diff。
 
-hmr有问题，能复现，修改静态dom的时候并不会改变？
+state的概念出来了
 
+有key的概念，估计diff算法都是前后对比（或者加上最大子共序列）
+
+#### 3.非要class组件才能使用state？（猜是hooks可以改变）
+
+#### 4.hmr有问题，能复现，修改静态dom的时候并不会改变？
+
+#### 5.```ReactDOM.render(jsx, DOM)```，直接修改```jsx```无法更新```hmr```有通知，但是前台页面没有拉取```js```。
+> 在修改index.js 也就是react入口文件，不论怎么修改，也是一样前台页面不会拉取js。
+> 并且，其他文件的hmr也失效了(ws有通知)，需要重新手动刷新页面。
+
+https://codesandbox.io/s/holy-bush-b6dkh?file=/src/index.js
+
+```codesandbox```行为，是```reload```页面。（```vue-cli/vite```中，修改```root```组件，行为一致）
+
+#### 6.jsx如何让key成为dom参数
+![转换](./readmeAssets/keyProps.png)
+
+#### 7.调用```setState```内部是怎么运行的，性能如何，patch影响面积
 
 # 知识点
-1.全程等于写render，jsx，{}自动寻找向上的变量名
+#### 1.全程等于写render，jsx，{}自动寻找向上的变量名
 
-2.直接插入的内容 jsx会进行转义
+#### 2.直接插入的内容 jsx会进行转义
 
-3.组件名称必须大写字母开头，```<Test/>```表示自定义组件，自定义组件寻找不到将error。
+#### 3.组件名称必须大写字母开头，```<Test/>```表示自定义组件，自定义组件寻找不到将error。
 > HTML 标签里的元素名不区分大小写。不敏感
 ```javascript
 function render() {
@@ -24,15 +40,9 @@ function render() {
 }
 ```
 
+#### 4.所有react组件都必须像存函数一样，不能改变自身参数。
 
-5.```ReactDOM.render(jsx, DOM)```，直接修改```jsx```无法更新```hmr```有通知，但是前台页面没有拉取```js```。
-> 在修改index.js 也就是react入口文件，不论怎么修改，也是一样前台页面不会拉取js。
->并且，其他文件的hmr也失效了，需要重新手动刷新页面。
-
-
-6.所有react组件都必须像存函数一样，不能改变自身参数。
-
-7.数据状态变动，使用state
+#### 5.数据状态变动，使用state
 ```javascript
 class C {
   constructor() {
@@ -54,10 +64,95 @@ class C {
 }
 ```
 
-8.直接使用```this.props```，在```jsx```中。传入```props```的写法就是正常```dom```参数
-> 在写dom参数的时候，如果jsx有props相关字段，那么不会传入dom上。
+#### 6.dom传入组件的参数，是真参数
+和vue有不同的地方是，vue的props字段，可以自动过滤，哪些是dom参数，哪些是组件参数。
 
-# babel:
+react中并不会配置成dom参数，统一当组件参数，如果需要设置组件最外层dom参数，需要手动配置。
+
+#### 7.dom事件处理
+> React 事件的命名采用小驼峰式（camelCase），而不是纯小写。
+> 使用 JSX 语法时你需要传入一个函数作为事件处理函数，而不是一个字符串。
+> 可以直接使用this.saySomething，自动寻找classComponent的原型链。
+```javascript
+function outSide() {
+  console.log('hi im here')
+}
+
+class TestClassComponent {
+  saySomething() {
+    console.log('hi')
+  }
+
+  render() {
+    return <div>
+      <h5 onClick={outSide}>click me</h5>
+      <div onClick={this.saySomething}>1</div>
+    </div>
+  }
+}
+
+TestClassComponent.prototype.saySomething = () => {
+  console.log('change say something')
+}
+// 点击1，会发现被改写
+// 点击click me 会发现class风格的component，原理和es5的实现class原理都是一样的。
+```
+关于点击事件，寻找的是原型链上的，所以没有```this```。也就是事件如果调用的方法，有```this```，那么```this```为上层（window）。
+
+解决方法，提前```bind(this)```(好迷... 可以去查看jsx转换模板)。
+
+#### 8.注释
+```jsx harmony
+  {/* <TestClassComponent date="123" dom-props="123" dom-int={123} /> */}
+```
+
+#### 9.可以使用componentWillUnmount删除因为hmr带来的重复状态
+
+#### 10.render中可以返回null，隐藏组件，等同于移除组件，生命周期照常。
+
+#### 11.jsx中可以直接使用```array: jsx[]```
+因为转换为render，child的类型可以是数组。
+
+#### 12.关于表单
+一切都为```onChange```与```value```，多选的时候，可以设置multiple属性为true
+```jsx harmony
+<select multiple={true} value={['B', 'C']}>
+```
+
+#### 13.state提升、共享
+改变成为props，把方法也调成props调用，再在父组件中setState，便会更新。（期待hooks）
+不然这样太麻烦了... 如果多层修改... 无限props。
+
+#### 14.关于组件的插槽
+```jsx harmony
+function T1(props) {
+ return <div>{props.children}</div>
+}
+
+function T2() {
+ return <T1>
+          <div></div>
+        </T1>
+}
+```
+
+jsx只是把子tree转换成了props.children
+
+还有更灵活的方式：
+```jsx harmony
+function SplitPane(props) {
+  return (<div>{props.a}</div>)
+}
+
+function App() {
+  const msg = 'test'
+  return (<SplitPane a={<div>{ msg }</div>} />)
+}
+```
+
+![](./readmeAssets/slot.png)
+
+# babel/jsx:
 
 ```javascript
 const element = (
@@ -96,3 +191,18 @@ function render() {
            // 4:
 }
 ```
+
+# 转换模板
+jsx转换为render。方便查看代码本身。
+
+https://www.babeljs.cn/
+
+
+# 高级指引篇
+
+## React.lazy
+配合```Suspense```，实现loading化加载。用cra创建的项目，这项功能就是基于webpack的异步加载。
+
+https://juejin.cn/post/6850418111599165448
+
+被打包的文件会被分开。
