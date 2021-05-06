@@ -1,6 +1,7 @@
 import './App.css';
 import React, { Suspense, lazy } from "react"; // 直接使用lazy 语义不会太好，不建议这样做
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import Example from "./example"
 
 // classComponent
 import TestClassComponent from './classComponent.js'
@@ -84,6 +85,8 @@ function App() {
           </Suspense>
         </Router>
       </div>
+
+      <Example/>
 
       <div>
         <h2>Context篇</h2>

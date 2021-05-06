@@ -223,7 +223,7 @@ Context的主要使用场景在于很多不同层级的组件需要访问同样�
 
 当 Provider 的 value 值发生变化时，它内部的所有消费组件都会重新渲染。Provider 及其内部 consumer 组件都不受制于 shouldComponentUpdate 函数，因此当 consumer 组件在其祖先组件退出更新的情况下也能更新。
 
-这句话不太了解，shouldComponentUpdate不知道是什么，大体推测就是，value的改变强行更新consumer组件。
+这句话不太了解，shouldComponentUpdate不知道是什么，大体推测就是，value的改变强行更新consumer组件（需测）。
 
 可以在任何生命周期中访问到他
 
@@ -235,3 +235,23 @@ Context的主要使用场景在于很多不同层级的组件需要访问同样�
 组件是将props转换为UI，而高阶组件是将组件转换为另一个组件。
 
 HOC其实就是把组件重复的东西收集起来，是一个概念（需要多花时间熟悉了），没有副作用
+
+## prop不会被传递的属性(组件)
+1.```key```
+2.```ref```
+
+## 关于ref
+ref并不会被当作组件参数传递，
+
+## 参数传递的方便方法
+```<LogProps {...props}/>```
+
+## 静态方法
+```jsx harmony
+import hoistNonReactStatic from 'hoist-non-react-statics';
+function enhance(WrappedComponent) {
+  class Enhance extends React.Component {/*...*/}
+  hoistNonReactStatic(Enhance, WrappedComponent);
+  return Enhance;
+}
+```

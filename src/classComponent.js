@@ -1,4 +1,5 @@
 import React from 'react';
+import Example from "./example";
 
 function outSide() {
   console.log('hi im here')
@@ -9,6 +10,7 @@ export default class TestClassComponent extends React.Component {
     super(props)
     console.log(props)
     this.state = { date: new Date() }
+    this.a = 'ff'
   }
 
   componentDidMount() {
@@ -16,7 +18,7 @@ export default class TestClassComponent extends React.Component {
     console.log('TestClassComponent 首次挂载')
   }
 
-  changeDate() {
+  changeDate = () => {
     this.setState({
       date: 'self change'
     })
@@ -29,7 +31,7 @@ export default class TestClassComponent extends React.Component {
 
   tick = () => {
     this.setState({
-      date: new Date()
+      a: 1
     })
   }
 
@@ -45,6 +47,7 @@ export default class TestClassComponent extends React.Component {
   }
 
   render() {
+    console.log('rise tick')
     return (
       <div>
         <h5 onClick={outSide}>click me</h5>
@@ -53,6 +56,7 @@ export default class TestClassComponent extends React.Component {
         {this.state.date.toLocaleTimeString()}
         {this.props.date}
 
+        <Example />
         <h2>input:</h2>
         {/* <input type="text" value={this.state.value} onChange={this.handleChange} /> */}
         {/* <input value="hi" /> {/* 输入固定值会被锁死 onChange 会照样运行吧，从而阻止输入 */}
